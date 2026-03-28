@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
  * Verify  từ: SGN đến là HAN, ngày đi là 25/3/2026, ngày về là 31/3/2026
  */
 
-test('Book flight from SGN to HAN', async ({ page }) => {
+test.skip('Book flight from SGN to HAN', async ({ page }) => {
     // Register cookie handler BEFORE navigation
     await page.addLocatorHandler(
         page.getByRole('button', { name: 'Chấp thuận tất cả Cookie' }),

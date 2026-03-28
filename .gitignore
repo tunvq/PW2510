@@ -9,7 +9,6 @@ lerna-debug.log*
 .env
 .claude
 .playwright-cli 
-.github/
 
 # Playwright
 /test-results/

@@ -28,7 +28,16 @@ test("GET all bookings", async ({request}) => {
 });
 
 test("GET booking by ID", async ({request}) => {
-    const response = await request.get('https://restful-booker.herokuapp.com/booking/1');
+    // Get list of all bookings to find a valid ID
+    const listResponse = await request.get('https://restful-booker.herokuapp.com/booking');
+    expect(listResponse.status()).toBe(200);
+    const bookings = await listResponse.json();
+    expect(bookings.length).toBeGreaterThan(0);
+    
+    // Get the first booking's ID
+    const bookingId = bookings[0].bookingid;
+    
+    const response = await request.get(`https://restful-booker.herokuapp.com/booking/${bookingId}`);
     expect(response.status()).toBe(200);
     const booking = await response.json();
     console.log(booking);
@@ -64,6 +73,25 @@ test("POST create a new booking", async ({request}) => {
 });
 
 test("PUT update a booking", async ({request}) => {
+    // First create a booking to update
+    const newBookingPayload = {
+        firstname: "John",
+        lastname: "Doe",
+        totalprice: 150,
+        depositpaid: true,
+        bookingdates: {
+            checkin: "2026-04-01",
+            checkout: "2026-04-10"
+        },
+        additionalneeds: "Breakfast"
+    };
+    
+    const createResponse = await request.post('https://restful-booker.herokuapp.com/booking', {
+        data: newBookingPayload
+    });
+    expect(createResponse.status()).toBe(200);
+    const { bookingid } = await createResponse.json();
+    
     // get token
     const authResponse = await request.post('https://restful-booker.herokuapp.com/auth', {
         data: {
@@ -87,7 +115,7 @@ test("PUT update a booking", async ({request}) => {
         additionalneeds: "Late checkout"
     };
 
-    const response = await request.put('https://restful-booker.herokuapp.com/booking/1', {
+    const response = await request.put(`https://restful-booker.herokuapp.com/booking/${bookingid}`, {
         data: updatedBookingPayload,
         headers: {'Cookie': `token=${token}`}   
     });
